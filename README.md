@@ -52,17 +52,17 @@ Most basic usage example (read about [Vue Scoped Slots](https://vuejs.org/v2/gui
 Advanced usage example:
 
 ```html
-<v-endless-list :items="items" 
-                 item-height="100" 
-                 height="50vh" 
-                 @reached-bottom="lazyLoadItems()">
+<v-endless-list :items="items"
+                item-height="100"
+                height="50vh"
+                @reached-bottom="lazyLoadItems()">
     <my-component slot-scope="item">
         {{ item.myData }}
     </my-component>
 </v-endless-list>
 ```
 
-Also check the demos in the `demo` directory. You can run the demos with `npm run demo`. Open your browser at `http://127.0.0.1:1337/demo`.
+Also check the demo in the `demo` directory. You can run the demos with `npm run demo`. Open your browser at `http://127.0.0.1:1337/demo`.
 
 
 ## API
