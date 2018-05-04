@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>v-endless-list</title>
+        <meta charset="utf-8">
+
+        <style>
+            html, body {
+                font-family: monospace;
+                font-size: 16px;
+            }
+            button {
+                font-family: inherit;
+                margin-top: 12px;
+            }
+            .endlessList {
+                border: 1px solid black;
+                width: 300px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="app">
+            <h2>v-endless-list</h2>
+            <p>Endless list with 10k items and lazy loading</p>
+
+            <v-endless-list :items="items"
+                             item-height="30"
+                             height="50vh"
+                             @reached-bottom="addItems"
+                             ref="endlessList"
+                             class="endlessList">
+                <demo-component slot-scope="item">
+                    {{ item.index }}
+                </demo-component>
+            </v-endless-list>
+
+            <div>
+                <button @click="scrollTo('top')">Scroll to top</button>
+                <button @click="scrollTo('bottom')">Scroll to bottom</button>
+                <button @click="scrollTo(1337)">Scroll to item #1337</button>
+                <button @click="addItems">Add 1k items</button>
+            </div>
+        </div>
+
+        <script src="https://unpkg.com/vue@2.5.16/dist/vue.min.js"></script>
+        <script src="../dist/vEndlessList.js"></script>
+
+        <script>
+            Vue.use(vEndlessList);
+
+            Vue.component('demo-component', {
+                template: `<div>
+                    <b>#</b> <slot></slot>
+                </div>`
+            });
+
+            function createItems(amount, startFrom) {
+                const items = Array.from(new Array(amount));
+                return items.map((_, index) => Object.freeze({ index: startFrom + index }));
+            }
+
+            new Vue({
+                el: '#app',
+                
+                data: {
+                    items: createItems(10000, 0)
+                },
+
+                methods: {
+                    scrollTo(target) {
+                        this.$refs.endlessList.$emit('scroll-to', target);
+                    },
+
+                    addItems() {
+                        this.items = this.items.concat(createItems(1000, this.items.length))
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>
