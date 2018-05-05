@@ -11,7 +11,7 @@ export default {
             default: () => []
         },
         itemHeight: {
-            type: Number,
+            type: [Number, String],
             default: 0
         },
         height: {
