@@ -80,11 +80,24 @@ export default {
     },
 
     render(h) {
-        const renderSlot = this.$scopedSlots.default || (() => { });
+        let children;
+        if (this.items.length === 0) {
+            children = [this.$slots.emptyList];
+        }
+        else {
+            const renderSlot = this.$scopedSlots.default || (() => { });
+            const itemsList = this.items
+                .slice(this.itemsStartIndex, this.itemsEndIndex + 1)
+                .map(item => h('div', this.itemStyle, [renderSlot(item)]));
 
-        const itemsList = this.items
-            .slice(this.itemsStartIndex, this.itemsEndIndex + 1)
-            .map(item => h('div', this.itemStyle, [renderSlot(item)]));
+            children = [h('div', {
+                style: {
+                    boxSizing: 'border-box',
+                    paddingTop: this.paddingTop + 'px',
+                    height: this.itemHeight * this.items.length + 'px'
+                }
+            }, itemsList)];
+        }
         
         return h('div', {
             ref: 'container',
@@ -92,12 +105,6 @@ export default {
                 height: this.height,
                 overflowY: 'scroll'
             }
-        }, [h('div', {
-            style: {
-                boxSizing: 'border-box',
-                paddingTop: this.paddingTop + 'px',
-                height: this.itemHeight * this.items.length + 'px'
-            }
-        }, itemsList)]);
+        }, children);
     }
 };

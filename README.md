@@ -56,6 +56,7 @@ Advanced usage example:
                 item-height="100"
                 height="50vh"
                 @reached-bottom="lazyLoadItems()">
+    <div slot="emptyList">No items in this list.</div>
     <my-component slot-scope="item">
         {{ item.myData }}
     </my-component>
@@ -71,6 +72,10 @@ Also check the demo in the `demo` directory. You can run the demos with `npm run
 * `items`: Array, required. List of items you want to display.
 * `item-height`: Number, required. Height of an individual list item in pixels. Overflow will be hidden.
 * `height`: String, optional, default `"100%"`. CSS height of the entire list component.
+
+### Slots
+* `default` (scoped slot, required): Component to render for each list item, receives the list item in the slot scope.
+* `emptyList` (optional): Text or content to show when there are no items in the list.
 
 ### Emitted Events
 * `reached-top`: Emitted when the list is scolled to the very top.

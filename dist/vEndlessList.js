@@ -198,11 +198,23 @@ exports.default = {
     render: function render(h) {
         var _this = this;
 
-        var renderSlot = this.$scopedSlots.default || function () {};
+        var children = void 0;
+        if (this.items.length === 0) {
+            children = [this.$slots.emptyList];
+        } else {
+            var renderSlot = this.$scopedSlots.default || function () {};
+            var itemsList = this.items.slice(this.itemsStartIndex, this.itemsEndIndex + 1).map(function (item) {
+                return h('div', _this.itemStyle, [renderSlot(item)]);
+            });
 
-        var itemsList = this.items.slice(this.itemsStartIndex, this.itemsEndIndex + 1).map(function (item) {
-            return h('div', _this.itemStyle, [renderSlot(item)]);
-        });
+            children = [h('div', {
+                style: {
+                    boxSizing: 'border-box',
+                    paddingTop: this.paddingTop + 'px',
+                    height: this.itemHeight * this.items.length + 'px'
+                }
+            }, itemsList)];
+        }
 
         return h('div', {
             ref: 'container',
@@ -210,13 +222,7 @@ exports.default = {
                 height: this.height,
                 overflowY: 'scroll'
             }
-        }, [h('div', {
-            style: {
-                boxSizing: 'border-box',
-                paddingTop: this.paddingTop + 'px',
-                height: this.itemHeight * this.items.length + 'px'
-            }
-        }, itemsList)]);
+        }, children);
     }
 };
 module.exports = exports['default'];

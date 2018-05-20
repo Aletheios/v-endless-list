@@ -31,9 +31,10 @@
                              @reached-bottom="addItems"
                              ref="endlessList"
                              class="endlessList">
-                <demo-component slot-scope="item">
+                <b slot="emptyList">No items in this list.</b>
+                <demo-list-item slot-scope="item">
                     {{ item.index }}
-                </demo-component>
+                </demo-list-item>
             </v-endless-list>
 
             <div>
@@ -41,6 +42,7 @@
                 <button @click="scrollTo('bottom')">Scroll to bottom</button>
                 <button @click="scrollTo(1337)">Scroll to item #1337</button>
                 <button @click="addItems">Add 1k items</button>
+                <button @click="removeAllItems">Remove all items</button>
             </div>
         </div>
 
@@ -50,7 +52,7 @@
         <script>
             Vue.use(vEndlessList);
 
-            Vue.component('demo-component', {
+            Vue.component('demo-list-item', {
                 template: `<div>
                     <b>#</b> <slot></slot>
                 </div>`
@@ -75,6 +77,10 @@
 
                     addItems() {
                         this.items = this.items.concat(createItems(1000, this.items.length))
+                    },
+
+                    removeAllItems() {
+                        this.items = [];
                     }
                 }
             });
