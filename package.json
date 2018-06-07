@@ -1,7 +1,7 @@
 {
     "name": "v-endless-list",
-    "version": "0.1.0",
-    "description": "Minimalistic and tiny Vue.js 2 scroll list component for an endless amount of data",
+    "version": "1.0.0",
+    "description": "Minimalistic and tiny Vue.js 2 scroll list components for an endless amount of data",
     "keywords": [
         "vue",
         "vuejs",
@@ -10,7 +10,8 @@
         "infinite-scroll",
         "virtual-scroller",
         "scroll-list",
-        "big-data"
+        "big-data",
+        "lazy-loading"
     ],
     "author": "Simon Ismair",
     "license": "MIT",

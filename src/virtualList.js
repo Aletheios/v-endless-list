@@ -1,22 +1,15 @@
-const EVENTS = {
-    reachedTop: 'reached-top',
-    reachedBottom: 'reached-bottom',
-    scrollTo: 'scroll-to'
-};
+import { EVENTS, isAlmostEqual, mixin } from '@/commons';
 
 export default {
+    mixins: [mixin],
+
     props: {
-        items: {
-            type: Array,
-            default: () => []
-        },
         itemHeight: {
             type: [Number, String],
-            default: 0
-        },
-        height: {
-            type: String,
-            default: '100%'
+            required: true,
+            validator(value) {
+                return !isNaN(+value) && +value >= 0;
+            }
         }
     },
 
@@ -60,7 +53,7 @@ export default {
             }
             else if (this.$listeners.hasOwnProperty(EVENTS.reachedBottom)) {
                 const totalHeight = this.itemHeight * this.items.length;
-                if (scrollTop + containerHeight === totalHeight) {
+                if (isAlmostEqual(totalHeight, scrollTop + containerHeight)) {
                     this.$emit(EVENTS.reachedBottom);
                 }
             }

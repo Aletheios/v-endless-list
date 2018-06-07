@@ -70,18 +70,11 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(1);
-
-
-/***/ }),
-/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -90,19 +83,40 @@ module.exports = __webpack_require__(1);
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.isAlmostEqual = isAlmostEqual;
+var EVENTS = exports.EVENTS = {
+    reachedTop: 'reached-top',
+    reachedBottom: 'reached-bottom',
+    scrollTo: 'scroll-to'
+};
 
-var _component = __webpack_require__(2);
+function isAlmostEqual(value1, value2) {
+    var threshold = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
 
-var _component2 = _interopRequireDefault(_component);
+    return Math.abs(value1 - value2) < threshold;
+}
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-    install: function install(Vue) {
-        Vue.component('v-endless-list', _component2.default);
+var mixin = exports.mixin = {
+    props: {
+        items: {
+            type: Array,
+            default: function _default() {
+                return [];
+            }
+        },
+        height: {
+            type: String,
+            default: '100%'
+        }
     }
 };
-module.exports = exports['default'];
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(2);
+
 
 /***/ }),
 /* 2 */
@@ -114,27 +128,48 @@ module.exports = exports['default'];
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-var EVENTS = {
-    reachedTop: 'reached-top',
-    reachedBottom: 'reached-bottom',
-    scrollTo: 'scroll-to'
-};
+
+var _virtualList = __webpack_require__(3);
+
+var _virtualList2 = _interopRequireDefault(_virtualList);
+
+var _lazyList = __webpack_require__(4);
+
+var _lazyList2 = _interopRequireDefault(_lazyList);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
+    install: function install(Vue) {
+        Vue.component('v-endless-virtual-list', _virtualList2.default);
+        Vue.component('v-endless-lazy-list', _lazyList2.default);
+    }
+};
+module.exports = exports['default'];
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _commons = __webpack_require__(0);
+
+exports.default = {
+    mixins: [_commons.mixin],
+
     props: {
-        items: {
-            type: Array,
-            default: function _default() {
-                return [];
-            }
-        },
         itemHeight: {
             type: [Number, String],
-            default: 0
-        },
-        height: {
-            type: String,
-            default: '100%'
+            required: true,
+            validator: function validator(value) {
+                return !isNaN(+value) && +value >= 0;
+            }
         }
     },
 
@@ -162,7 +197,7 @@ exports.default = {
         this.$refs.container.addEventListener('scroll', this.onScroll);
         this.onScroll();
 
-        this.$on(EVENTS.scrollTo, this.scrollTo);
+        this.$on(_commons.EVENTS.scrollTo, this.scrollTo);
     },
 
 
@@ -175,12 +210,12 @@ exports.default = {
             this.itemsEndIndex = this.itemsStartIndex + Math.ceil(containerHeight / this.itemHeight);
             this.paddingTop = this.itemsStartIndex * this.itemHeight;
 
-            if (scrollTop === 0 && this.$listeners.hasOwnProperty(EVENTS.reachedTop)) {
-                this.$emit(EVENTS.reachedTop);
-            } else if (this.$listeners.hasOwnProperty(EVENTS.reachedBottom)) {
+            if (scrollTop === 0 && this.$listeners.hasOwnProperty(_commons.EVENTS.reachedTop)) {
+                this.$emit(_commons.EVENTS.reachedTop);
+            } else if (this.$listeners.hasOwnProperty(_commons.EVENTS.reachedBottom)) {
                 var totalHeight = this.itemHeight * this.items.length;
-                if (scrollTop + containerHeight === totalHeight) {
-                    this.$emit(EVENTS.reachedBottom);
+                if ((0, _commons.isAlmostEqual)(totalHeight, scrollTop + containerHeight)) {
+                    this.$emit(_commons.EVENTS.reachedBottom);
                 }
             }
         },
@@ -214,6 +249,113 @@ exports.default = {
                     height: this.itemHeight * this.items.length + 'px'
                 }
             }, itemsList)];
+        }
+
+        return h('div', {
+            ref: 'container',
+            style: {
+                height: this.height,
+                overflowY: 'scroll'
+            }
+        }, children);
+    }
+};
+module.exports = exports['default'];
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _commons = __webpack_require__(0);
+
+exports.default = {
+    mixins: [_commons.mixin],
+
+    props: {
+        increment: {
+            type: [Number, String],
+            default: 10,
+            validator: function validator(value) {
+                return !isNaN(+value) && +value >= 0;
+            }
+        },
+        loadingThreshold: {
+            type: [Number, String],
+            default: 10,
+            validator: function validator(value) {
+                return !isNaN(+value) && +value >= 0;
+            }
+        },
+        listChangeBehavior: {
+            type: String,
+            default: 'reset',
+            validator: function validator(value) {
+                return ['reset', 'keep'].includes(value);
+            }
+        }
+    },
+
+    data: function data() {
+        return {
+            limitIndex: +this.increment
+        };
+    },
+
+
+    computed: {
+        numberOfItems: function numberOfItems() {
+            return this.items.length;
+        }
+    },
+
+    watch: {
+        numberOfItems: function numberOfItems(newValue) {
+            if (this.listChangeBehavior === 'reset') {
+                this.limitIndex = Math.min(newValue, +this.increment);
+                this.$refs.container.scrollTop = 0;
+            } else {
+                this.limitIndex = Math.min(newValue, this.limitIndex);
+            }
+        }
+    },
+
+    mounted: function mounted() {
+        this.$refs.container.addEventListener('scroll', this.onScroll);
+    },
+
+
+    methods: {
+        onScroll: function onScroll() {
+            var container = this.$refs.container;
+
+            if ((0, _commons.isAlmostEqual)(container.scrollTop, container.scrollHeight - container.offsetHeight, +this.loadingThreshold)) {
+                this.limitIndex = Math.min(this.numberOfItems, +this.increment + this.limitIndex);
+
+                if (this.$listeners.hasOwnProperty(_commons.EVENTS.reachedBottom)) {
+                    this.$emit(_commons.EVENTS.reachedBottom);
+                }
+            } else if (container.scrollTop === 0 && this.$listeners.hasOwnProperty(_commons.EVENTS.reachedTop)) {
+                this.$emit(_commons.EVENTS.reachedTop);
+            }
+        }
+    },
+
+    render: function render(h) {
+        var children = void 0;
+        if (this.items.length === 0) {
+            children = [this.$slots.emptyList];
+        } else {
+            var renderSlot = this.$scopedSlots.default || function () {};
+            children = this.items.slice(0, this.limitIndex).map(function (item) {
+                return h('div', {}, [renderSlot(item)]);
+            });
         }
 
         return h('div', {

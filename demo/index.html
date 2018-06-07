@@ -13,9 +13,17 @@
                 font-family: inherit;
                 margin-top: 12px;
             }
+            .columns {
+                display: flex;
+                flex-direction: row;
+            }
             .endlessList {
                 border: 1px solid black;
                 width: 300px;
+            }
+            .column {
+                width: 50%;
+                padding: 0 25px;
             }
         </style>
     </head>
@@ -23,26 +31,49 @@
     <body>
         <div id="app">
             <h2>v-endless-list</h2>
-            <p>Endless list with 10k items and lazy loading</p>
 
-            <v-endless-list :items="items"
-                             item-height="30"
-                             height="50vh"
-                             @reached-bottom="addItems"
-                             ref="endlessList"
-                             class="endlessList">
-                <b slot="emptyList">No items in this list.</b>
-                <demo-list-item slot-scope="item">
-                    {{ item.index }}
-                </demo-list-item>
-            </v-endless-list>
+            <div class="columns">
+                <div class="column">
+                    <h3>v-endless-virtual-list</h3>
+                    <p>Virtual list with 10k items with fixed height and endless lazy loading</p>
 
-            <div>
-                <button @click="scrollTo('top')">Scroll to top</button>
-                <button @click="scrollTo('bottom')">Scroll to bottom</button>
-                <button @click="scrollTo(1337)">Scroll to item #1337</button>
-                <button @click="addItems">Add 1k items</button>
-                <button @click="removeAllItems">Remove all items</button>
+                    <v-endless-virtual-list :items="items"
+                                            height="50vh"
+                                            item-height="30"
+                                            @reached-bottom="addItems"
+                                            ref="endlessList"
+                                            class="endlessList">
+                        <b slot="emptyList">No items in this list.</b>
+                        <demo-list-item slot-scope="item">
+                            {{ item.index }}
+                        </demo-list-item>
+                    </v-endless-virtual-list>
+
+                    <div>
+                        <button @click="scrollTo('top')">Scroll to top</button>
+                        <button @click="scrollTo('bottom')">Scroll to bottom</button>
+                        <button @click="scrollTo(1337)">Scroll to item #1337</button>
+                        <br><br>
+                        <button @click="addItems">Add 1k items to both lists</button>
+                        <button @click="removeAllItems">Remove all items from both lists</button>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <h3>v-endless-lazy-list</h3>
+                    <p>Lazy loading list with 10k items with variable height</p>
+
+                    <v-endless-lazy-list :items="items"
+                                         height="50vh"
+                                         increment="25"
+                                         list-change-behavior="keep"
+                                         class="endlessList">
+                        <b slot="emptyList">No items in this list.</b>
+                        <demo-list-item slot-scope="item" :style="{ height: getRandomHeight(item.index) }">
+                            {{ item.index }}
+                        </demo-list-item>
+                    </v-endless-lazy-list>
+                </div>
             </div>
         </div>
 
@@ -67,20 +98,25 @@
                 el: '#app',
                 
                 data: {
-                    items: createItems(10000, 0)
+                    items: createItems(10000, 0),
+                    heights: { }
                 },
 
                 methods: {
                     scrollTo(target) {
                         this.$refs.endlessList.$emit('scroll-to', target);
                     },
-
                     addItems() {
                         this.items = this.items.concat(createItems(1000, this.items.length))
                     },
-
                     removeAllItems() {
                         this.items = [];
+                    },
+                    getRandomHeight(index) {
+                        if (!this.heights[index]) {
+                            this.heights[index] = Math.floor(20 + Math.random() * 50) + 'px';
+                        }
+                        return this.heights[index];
                     }
                 }
             });
