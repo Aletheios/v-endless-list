@@ -85,7 +85,7 @@ Advanced usage example for both components:
     <my-component slot-scope="item">
         {{ item.myData }}
     </my-component>
-</v-endless-virtual-list>
+</v-endless-lazy-list>
 ```
 
 Also check the demo in the `demo` directory. You can run the demos with `npm run demo`. Open your browser at `http://127.0.0.1:1337/demo`.
@@ -105,7 +105,7 @@ Also check the demo in the `demo` directory. You can run the demos with `npm run
 * `emptyList` (optional): Text or content to show when there are no items in the list.
 
 #### Emitted Events
-* `reached-top`: Emitted when the list is scolled to the very top.
+* `reached-top`: Emitted when the list is scrolled to the very top.
 * `reached-bottom`: Emitted when the list is scrolled to the very bottom. Can be used for lazy loading new items.
 
 #### Received Events
@@ -121,14 +121,14 @@ Also check the demo in the `demo` directory. You can run the demos with `npm run
 * `height`: String, optional, default `"100%"`. CSS height of the entire list component.
 * `increment`: Number, optional, default `10`. Number of items to add to the end of the list on lazy loading.
 * `loadingThreshold`: Number, optional, default `10`. Threshold after which lazy loading is triggered, i.e. number of pixels before reaching the end of the list when scrolling.
-* `listChangeBehavior`: Either `'reset'` or `'keep'`, optional, default `'reset'`. Behavior of the list when the data set length changes.
-    * `'reset'`: Reset the number of items to `increment` and scroll to the top.
-    * `'keep'`: Keep the number of currently shown items as well as scroll state.
+* `listChangeBehavior`: Either `"reset"` or `"keep"`, optional, default `"reset"`. Behavior of the list when the data set length changes.
+    * `"reset"`: Reset the number of items to `increment` and scroll to the top.
+    * `"keep"`: Keep the number of currently shown items as well as scroll state.
 
 #### Slots
 * `default` (scoped slot, required): Component to render for each list item, receives the list item in the slot scope.
 * `emptyList` (optional): Text or content to show when there are no items in the list.
 
 #### Emitted Events
-* `reached-top`: Emitted when the list is scolled to the very top.
+* `reached-top`: Emitted when the list is scrolled to the very top.
 * `reached-bottom`: Emitted when the list is scrolled to the very bottom. Can be used for lazy loading new items.
