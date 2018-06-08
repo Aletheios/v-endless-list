@@ -1,4 +1,4 @@
-import { EVENTS, isAlmostEqual, mixin } from '@/commons';
+import { EVENTS, SCROLL_TARGETS, mixin } from '@/commons';
 
 export default {
     mixins: [mixin],
@@ -46,20 +46,22 @@ export default {
                 this.$refs.container.scrollTop = 0;
             }
             else {
-                this.limitIndex = Math.min(newValue, this.limitIndex);
+                this.limitIndex = Math.max(+this.increment, Math.min(newValue, this.limitIndex));
             }
         }
     },
 
     mounted() {
         this.$refs.container.addEventListener('scroll', this.onScroll);
+
+        this.$on(EVENTS.scrollTo, this.scrollTo);
     },
 
     methods: {
         onScroll() {
             const container = this.$refs.container;
             
-            if (isAlmostEqual(container.scrollTop, container.scrollHeight - container.offsetHeight, +this.loadingThreshold)) {
+            if (this.isAlmostEqual(container.scrollTop, container.scrollHeight - container.offsetHeight, +this.loadingThreshold)) {
                 this.limitIndex = Math.min(this.numberOfItems, +this.increment + this.limitIndex);
 
                 if (this.$listeners.hasOwnProperty(EVENTS.reachedBottom)) {
@@ -68,6 +70,24 @@ export default {
             }
             else if (container.scrollTop === 0 && this.$listeners.hasOwnProperty(EVENTS.reachedTop)) {
                 this.$emit(EVENTS.reachedTop);
+            }
+        },
+
+        scrollTo(index) {
+            const container = this.$refs.container;
+
+            if (index === SCROLL_TARGETS.top) {
+                container.scrollTop = 0;
+            }
+            else if (index === SCROLL_TARGETS.bottom) {
+                this.limitIndex = this.items.length;
+                this.$nextTick(() => (container.scrollTop = container.scrollHeight));
+            }
+            else if (!isNaN(+index) && index >= 0 && index < this.items.length) {
+                if (index >= this.limitIndex - this.increment) {
+                    this.limitIndex = Math.min(this.numberOfItems, +this.increment + index);
+                }
+                this.$nextTick(() => container.children[index].scrollIntoView());
             }
         }
     },

@@ -83,18 +83,16 @@ return /******/ (function(modules) { // webpackBootstrap
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.isAlmostEqual = isAlmostEqual;
 var EVENTS = exports.EVENTS = {
     reachedTop: 'reached-top',
     reachedBottom: 'reached-bottom',
     scrollTo: 'scroll-to'
 };
 
-function isAlmostEqual(value1, value2) {
-    var threshold = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
-
-    return Math.abs(value1 - value2) < threshold;
-}
+var SCROLL_TARGETS = exports.SCROLL_TARGETS = {
+    top: 'top',
+    bottom: 'bottom'
+};
 
 var mixin = exports.mixin = {
     props: {
@@ -107,6 +105,14 @@ var mixin = exports.mixin = {
         height: {
             type: String,
             default: '100%'
+        }
+    },
+
+    methods: {
+        isAlmostEqual: function isAlmostEqual(value1, value2) {
+            var threshold = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
+
+            return Math.abs(value1 - value2) < threshold;
         }
     }
 };
@@ -195,14 +201,14 @@ exports.default = {
 
     mounted: function mounted() {
         this.$refs.container.addEventListener('scroll', this.onScroll);
-        this.onScroll();
+        this.onScroll(true);
 
         this.$on(_commons.EVENTS.scrollTo, this.scrollTo);
     },
 
 
     methods: {
-        onScroll: function onScroll() {
+        onScroll: function onScroll(init) {
             var scrollTop = this.$refs.container.scrollTop;
             var containerHeight = this.$refs.container.clientHeight;
 
@@ -211,18 +217,20 @@ exports.default = {
             this.paddingTop = this.itemsStartIndex * this.itemHeight;
 
             if (scrollTop === 0 && this.$listeners.hasOwnProperty(_commons.EVENTS.reachedTop)) {
-                this.$emit(_commons.EVENTS.reachedTop);
+                if (init !== true) {
+                    this.$emit(_commons.EVENTS.reachedTop);
+                }
             } else if (this.$listeners.hasOwnProperty(_commons.EVENTS.reachedBottom)) {
                 var totalHeight = this.itemHeight * this.items.length;
-                if ((0, _commons.isAlmostEqual)(totalHeight, scrollTop + containerHeight)) {
+                if (this.isAlmostEqual(totalHeight, scrollTop + containerHeight)) {
                     this.$emit(_commons.EVENTS.reachedBottom);
                 }
             }
         },
         scrollTo: function scrollTo(index) {
-            if (index === 'top') {
+            if (index === _commons.SCROLL_TARGETS.top) {
                 this.$refs.container.scrollTop = 0;
-            } else if (index === 'bottom') {
+            } else if (index === _commons.SCROLL_TARGETS.bottom) {
                 this.$refs.container.scrollTop = (this.items.length - 1) * this.itemHeight;
             } else if (!isNaN(+index) && index >= 0 && index < this.items.length) {
                 this.$refs.container.scrollTop = index * this.itemHeight;
@@ -321,13 +329,15 @@ exports.default = {
                 this.limitIndex = Math.min(newValue, +this.increment);
                 this.$refs.container.scrollTop = 0;
             } else {
-                this.limitIndex = Math.min(newValue, this.limitIndex);
+                this.limitIndex = Math.max(+this.increment, Math.min(newValue, this.limitIndex));
             }
         }
     },
 
     mounted: function mounted() {
         this.$refs.container.addEventListener('scroll', this.onScroll);
+
+        this.$on(_commons.EVENTS.scrollTo, this.scrollTo);
     },
 
 
@@ -335,7 +345,7 @@ exports.default = {
         onScroll: function onScroll() {
             var container = this.$refs.container;
 
-            if ((0, _commons.isAlmostEqual)(container.scrollTop, container.scrollHeight - container.offsetHeight, +this.loadingThreshold)) {
+            if (this.isAlmostEqual(container.scrollTop, container.scrollHeight - container.offsetHeight, +this.loadingThreshold)) {
                 this.limitIndex = Math.min(this.numberOfItems, +this.increment + this.limitIndex);
 
                 if (this.$listeners.hasOwnProperty(_commons.EVENTS.reachedBottom)) {
@@ -343,6 +353,25 @@ exports.default = {
                 }
             } else if (container.scrollTop === 0 && this.$listeners.hasOwnProperty(_commons.EVENTS.reachedTop)) {
                 this.$emit(_commons.EVENTS.reachedTop);
+            }
+        },
+        scrollTo: function scrollTo(index) {
+            var container = this.$refs.container;
+
+            if (index === _commons.SCROLL_TARGETS.top) {
+                container.scrollTop = 0;
+            } else if (index === _commons.SCROLL_TARGETS.bottom) {
+                this.limitIndex = this.items.length;
+                this.$nextTick(function () {
+                    return container.scrollTop = container.scrollHeight;
+                });
+            } else if (!isNaN(+index) && index >= 0 && index < this.items.length) {
+                if (index >= this.limitIndex - this.increment) {
+                    this.limitIndex = Math.min(this.numberOfItems, +this.increment + index);
+                }
+                this.$nextTick(function () {
+                    return container.children[index].scrollIntoView();
+                });
             }
         }
     },

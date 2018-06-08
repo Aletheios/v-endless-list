@@ -4,9 +4,10 @@ export const EVENTS = {
     scrollTo: 'scroll-to'
 };
 
-export function isAlmostEqual(value1, value2, threshold = 1) {
-    return Math.abs(value1 - value2) < threshold;
-}
+export const SCROLL_TARGETS = {
+    top: 'top',
+    bottom: 'bottom'
+};
 
 export const mixin = {
     props: {
@@ -17,6 +18,12 @@ export const mixin = {
         height: {
             type: String,
             default: '100%'
+        }
+    },
+
+    methods: {
+        isAlmostEqual(value1, value2, threshold = 1) {
+            return Math.abs(value1 - value2) < threshold;
         }
     }
 };

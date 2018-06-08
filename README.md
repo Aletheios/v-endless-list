@@ -109,7 +109,7 @@ Also check the demo in the `demo` directory. You can run the demos with `npm run
 * `reached-bottom`: Emitted when the list is scrolled to the very bottom. Can be used for lazy loading new items.
 
 #### Received Events
-* `scroll-to`: Can be used to scroll the list to given items. Valid parameters are:
+* `scroll-to`: Can be used to scroll the list to a given item. Valid parameters are:
     * `"top"`: scroll to top
     * `"bottom"`: scroll to bottom
     * index (Number): scroll to the item with the given index
@@ -131,4 +131,10 @@ Also check the demo in the `demo` directory. You can run the demos with `npm run
 
 #### Emitted Events
 * `reached-top`: Emitted when the list is scrolled to the very top.
-* `reached-bottom`: Emitted when the list is scrolled to the very bottom. Can be used for lazy loading new items.
+* `reached-bottom`: Emitted when the list is scrolled to the very bottom.
+
+#### Received Events
+* `scroll-to`: Can be used to scroll the list to a given item. Valid parameters are:
+    * `"top"`: scroll to top
+    * `"bottom"`: scroll to bottom. Forces loading of all items. Note that this can have a huge performance impact and might freeze the browser temporarily. Use with caution.
+    * index (Number): scroll to the item with the given index. See note on performance above.

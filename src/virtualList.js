@@ -1,4 +1,4 @@
-import { EVENTS, isAlmostEqual, mixin } from '@/commons';
+import { EVENTS, SCROLL_TARGETS, mixin } from '@/commons';
 
 export default {
     mixins: [mixin],
@@ -34,13 +34,13 @@ export default {
 
     mounted() {
         this.$refs.container.addEventListener('scroll', this.onScroll);
-        this.onScroll();
+        this.onScroll(true);
 
         this.$on(EVENTS.scrollTo, this.scrollTo);
     },
 
     methods: {
-        onScroll() {
+        onScroll(init) {
             const scrollTop = this.$refs.container.scrollTop;
             const containerHeight = this.$refs.container.clientHeight;
 
@@ -49,21 +49,23 @@ export default {
             this.paddingTop = this.itemsStartIndex * this.itemHeight;
 
             if (scrollTop === 0 && this.$listeners.hasOwnProperty(EVENTS.reachedTop)) {
-                this.$emit(EVENTS.reachedTop);
+                if (init !== true) {
+                    this.$emit(EVENTS.reachedTop);
+                }
             }
             else if (this.$listeners.hasOwnProperty(EVENTS.reachedBottom)) {
                 const totalHeight = this.itemHeight * this.items.length;
-                if (isAlmostEqual(totalHeight, scrollTop + containerHeight)) {
+                if (this.isAlmostEqual(totalHeight, scrollTop + containerHeight)) {
                     this.$emit(EVENTS.reachedBottom);
                 }
             }
         },
 
         scrollTo(index) {
-            if (index === 'top') {
+            if (index === SCROLL_TARGETS.top) {
                 this.$refs.container.scrollTop = 0;
             }
-            else if (index === 'bottom') {
+            else if (index === SCROLL_TARGETS.bottom) {
                 this.$refs.container.scrollTop = (this.items.length - 1) * this.itemHeight;
             }
             else if (!isNaN(+index) && index >= 0 && index < this.items.length) {
