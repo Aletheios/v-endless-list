@@ -58,17 +58,17 @@ Most basic usage example for both components (read about [Vue Scoped Slots](http
 
 ```html
 <v-endless-virtual-list :items="items" item-height="100">
-    <div slot-scope="item">
-        {{ item }}
-    </div>
+    <template #default="item">
+        <div>{{ item }}</div>
+    </template>
 </v-endless-virtual-list>
 ```
 
 ```html
 <v-endless-lazy-list :items="items">
-    <div slot-scope="item">
-        {{ item }}
-    </div>
+    <template #default="item">
+        <div>{{ item }}</div>
+    </template>
 </v-endless-lazy-list>
 ```
 
@@ -79,10 +79,12 @@ Advanced usage example for both components:
                         height="50vh"
                         item-height="100"
                         @reached-bottom="lazyLoadItems()">
-    <div slot="emptyList">No items in this list.</div>
-    <my-component slot-scope="item">
-        {{ item.myData }}
-    </my-component>
+    <template #empty-list>
+        <b>No items in this list.</b>
+    </template>
+    <template #default="item">
+        <my-component :my-data="item.myData"></my-component>
+    </template>
 </v-endless-virtual-list>
 ```
 
@@ -93,10 +95,12 @@ Advanced usage example for both components:
                      loading-threshold="42"
                      list-change-behavior="keep"
                      @reached-top="onReachedTop()">
-    <div slot="emptyList">No items in this list.</div>
-    <my-component slot-scope="item">
-        {{ item.myData }}
-    </my-component>
+    <template #empty-list>
+        <b>No items in this list.</b>
+    </template>
+    <template #default="item">
+        <my-component :my-data="item.myData"></my-component>
+    </template>
 </v-endless-lazy-list>
 ```
 
@@ -114,7 +118,7 @@ Also check the demo in the `demo` directory. You can run the demos with `npm run
 
 #### Slots
 * `default` (scoped slot, required): Component to render for each list item, receives the list item in the slot scope.
-* `emptyList` (optional): Text or content to show when there are no items in the list.
+* `empty-list` (optional): Text or content to show when there are no items in the list.
 
 #### Emitted Events
 * `reached-top`: Emitted when the list is scrolled to the very top.
@@ -139,7 +143,7 @@ Also check the demo in the `demo` directory. You can run the demos with `npm run
 
 #### Slots
 * `default` (scoped slot, required): Component to render for each list item, receives the list item in the slot scope.
-* `emptyList` (optional): Text or content to show when there are no items in the list.
+* `empty-list` (optional): Text or content to show when there are no items in the list.
 
 #### Emitted Events
 * `reached-top`: Emitted when the list is scrolled to the very top.

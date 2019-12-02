@@ -28,10 +28,14 @@
                                             item-height="30"
                                             ref="virtualList"
                                             class="endlessList">
-                        <b slot="emptyList">No items in this list.</b>
-                        <demo-list-item slot-scope="item">
-                            {{ item.index }}
-                        </demo-list-item>
+                        <template #empty-list>
+                            <b>No items in this list.</b>
+                        </template>
+                        <template #default="item">
+                            <demo-list-item>
+                                {{ item.index }}
+                            </demo-list-item>
+                        </template>
                     </v-endless-virtual-list>
 
                     <div class="buttons">
@@ -54,16 +58,20 @@
                                          list-change-behavior="keep"
                                          ref="lazyList"
                                          class="endlessList">
-                        <b slot="emptyList">No items in this list.</b>
-                        <demo-list-item slot-scope="item" :style="{ height: getRandomHeight(item.index) }">
-                            {{ item.index }}
-                        </demo-list-item>
+                        <template #empty-list>
+                            <b>No items in this list.</b>
+                        </template>
+                        <template #default="item">
+                            <demo-list-item :style="{ height: getRandomHeight(item.index) }">
+                                {{ item.index }}
+                            </demo-list-item>
+                        </template>
                     </v-endless-lazy-list>
                 </div>
             </div>
         </div>
 
-        <script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
+        <script src="https://unpkg.com/vue@2.6.10/dist/vue.min.js"></script>
         <script src="../dist/vEndlessList.js"></script>
 
         <script>

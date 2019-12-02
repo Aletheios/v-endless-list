@@ -302,12 +302,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       var children;
 
       if (this.items.length === 0) {
-        children = [this.$slots.emptyList];
+        var renderSlot = this.$scopedSlots['empty-list'];
+        children = [renderSlot()];
       } else {
-        var renderSlot = this.$scopedSlots.default || function () {};
+        var _renderSlot = this.$scopedSlots.default || function () {};
 
         children = this.items.slice(0, this.limitIndex).map(function (item) {
-          return h('div', {}, [renderSlot(item)]);
+          return h('div', {}, [_renderSlot(item)]);
         });
       }
 
@@ -416,12 +417,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       var children;
 
       if (this.items.length === 0) {
-        children = [this.$slots.emptyList];
+        var renderSlot = this.$scopedSlots['empty-list'];
+        children = [renderSlot()];
       } else {
-        var renderSlot = this.$scopedSlots.default || function () {};
+        var _renderSlot = this.$scopedSlots.default || function () {};
 
         var itemsList = this.items.slice(this.itemsStartIndex, this.itemsEndIndex + 1).map(function (item) {
-          return h('div', _this.itemStyle, [renderSlot(item)]);
+          return h('div', _this.itemStyle, [_renderSlot(item)]);
         });
         children = [h('div', {
           style: {

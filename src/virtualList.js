@@ -77,7 +77,8 @@ export default {
     render(h) {
         let children;
         if (this.items.length === 0) {
-            children = [this.$slots.emptyList];
+            const renderSlot = this.$scopedSlots['empty-list'];
+            children = [renderSlot()];
         }
         else {
             const renderSlot = this.$scopedSlots.default || (() => { });
