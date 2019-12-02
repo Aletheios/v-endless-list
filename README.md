@@ -1,6 +1,6 @@
 # v-endless-list
 
-**Minimalistic and tiny [Vue.js 2](https://vuejs.org/) scroll list components for an endless amount of data**
+**Minimalistic and tiny [Vue.js](https://vuejs.org/) scroll list components for an endless amount of data**
 
 Provides two components:
 * `v-endless-virtual-list`: Renders only items in the viewport for performance. Supports lazy loading and jumping to given items. Requires fixed item height. Recommended for extremely large data sets.
@@ -37,6 +37,18 @@ Or include the files via `<script>` tag:
 <script>
     Vue.use(vEndlessList);
 </script>
+```
+
+You can also register the components you need locally in your Vue component, for example:
+
+```javascript
+import { VEndlessVirtualList } from 'v-endless-list';
+export default {
+    name: 'MyComponent',
+    components: {
+        VEndlessVirtualList
+    }
+};
 ```
 
 

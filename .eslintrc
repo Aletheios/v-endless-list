@@ -29,7 +29,7 @@
         "no-unexpected-multiline": 1,
         "accessor-pairs": [1,{"getWithoutSet":false,"setWithoutGet":true}],
         "block-scoped-var": 1,
-        "consistent-return": 2,
+        "consistent-return": 1,
         "curly": [2,"all"],
         "dot-notation": [2,{"allowKeywords":true,"allowPattern":"^[a-z]+(_[a-z]+)+$"}],
         "dot-location": [2,"property"],
@@ -123,7 +123,7 @@
     "parserOptions": {
         "parser": "babel-eslint",
         "sourceType": "module",
-        "ecmaVersion": 2017
+        "ecmaVersion": 2018
     },
     
     "env": {
