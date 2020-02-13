@@ -1,4 +1,4 @@
-import { EVENTS, SCROLL_TARGETS, mixin } from '@/commons';
+import { EVENTS, SCROLL_TARGETS, mixin } from './commons';
 
 export default {
     mixins: [mixin],

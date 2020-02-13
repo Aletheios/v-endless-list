@@ -1,5 +1,5 @@
-import VirtualList from '@/virtualList';
-import LazyList from '@/lazyList';
+import VirtualList from './virtualList';
+import LazyList from './lazyList';
 
 export default {
     VEndlessVirtualList: VirtualList,
