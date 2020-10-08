@@ -2,10 +2,13 @@
 
 **Minimalistic and tiny [Vue.js](https://vuejs.org/) scroll list components for an endless amount of data**
 
+**Note: Version 3.x of v-endless-list is compatible with Vue 3 only. Install version 2.x if you use Vue 2.**
+
 Provides two components:
 * `v-endless-virtual-list`: Renders only items in the viewport for performance. Supports lazy loading and jumping to given items. Requires fixed item height. Recommended for extremely large data sets.
 
 * `v-endless-lazy-list`: Simple list with lazy loading. Supports variable height items but is less efficient for large data sets (slower when scrolling far down). Recommended for small to medium data sets.
+
 
 ## Table of Contents
 
@@ -16,7 +19,7 @@ Provides two components:
 
 ## Installation
 
-Install `v-endless-list` via npm:
+Install `v-endless-list`:
 
 ```bash
 npm install --save v-endless-list
@@ -25,30 +28,22 @@ npm install --save v-endless-list
 Then import it in your project:
 
 ```javascript
-import Vue from 'vue';
-import vEndlessList from 'v-endless-list';
-Vue.use(vEndlessList);
+import { createApp, h } from 'vue';
+
+const app = Vue.createApp(App);
+app.use(vEndlessList, { h });
+app.mount('#app');
 ```
 
 Or include the files via `<script>` tag:
 ```html
-<script src="node_modules/vue/dist/vue.min.js"></script>
-<script src="node_modules/v-endless-list/dist/vEndlessList.min.js"></script>
+<script src="https://unpkg.com/vue@3.0.0/dist/vue.global.prod.js"></script>
+<script src="https://unpkg.com/v-endless-list/dist/vEndlessList.min.js"></script>
 <script>
-    Vue.use(vEndlessList);
+    const app = Vue.createApp(App);
+    app.use(vEndlessList, { h: Vue.h });
+    app.mount('#app');
 </script>
-```
-
-You can also register the components you need locally in your Vue component, for example:
-
-```javascript
-import { VEndlessVirtualList } from 'v-endless-list';
-export default {
-    name: 'MyComponent',
-    components: {
-        VEndlessVirtualList
-    }
-};
 ```
 
 
@@ -75,10 +70,12 @@ Most basic usage example for both components (read about [Vue Scoped Slots](http
 Advanced usage example for both components:
 
 ```html
-<v-endless-virtual-list :items="items"
-                        height="50vh"
-                        item-height="100"
-                        @reached-bottom="lazyLoadItems()">
+<v-endless-virtual-list
+    :items="items"
+    height="50vh"
+    item-height="100"
+    @reached-bottom="lazyLoadItems()"
+>
     <template #empty-list>
         <b>No items in this list.</b>
     </template>
@@ -89,12 +86,14 @@ Advanced usage example for both components:
 ```
 
 ```html
-<v-endless-lazy-list :items="items"
-                     height="50vh"
-                     increment="100"
-                     loading-threshold="42"
-                     list-change-behavior="keep"
-                     @reached-top="onReachedTop()">
+<v-endless-lazy-list
+    :items="items"
+    height="50vh"
+    increment="100"
+    loading-threshold="42"
+    list-change-behavior="keep"
+    @reached-top="onReachedTop()"
+>
     <template #empty-list>
         <b>No items in this list.</b>
     </template>
@@ -124,8 +123,8 @@ Also check the demo in the `demo` directory. You can run the demos with `npm run
 * `reached-top`: Emitted when the list is scrolled to the very top.
 * `reached-bottom`: Emitted when the list is scrolled to the very bottom. Can be used for lazy loading new items.
 
-#### Received Events
-* `scroll-to`: Can be used to scroll the list to a given item. Valid parameters are:
+#### Methods
+* `scrollTo`: Can be used to scroll the list to a given item. Valid parameters are:
     * `"top"`: scroll to top
     * `"bottom"`: scroll to bottom
     * index (Number): scroll to the item with the given index
@@ -149,8 +148,8 @@ Also check the demo in the `demo` directory. You can run the demos with `npm run
 * `reached-top`: Emitted when the list is scrolled to the very top.
 * `reached-bottom`: Emitted when the list is scrolled to the very bottom.
 
-#### Received Events
-* `scroll-to`: Can be used to scroll the list to a given item. Valid parameters are:
+#### Methods
+* `scrollTo`: Can be used to scroll the list to a given item. Valid parameters are:
     * `"top"`: scroll to top
     * `"bottom"`: scroll to bottom. Forces loading of all items. Note that this can have a huge performance impact and might freeze the browser temporarily. Use with caution.
     * index (Number): scroll to the item with the given index. See note on performance above.

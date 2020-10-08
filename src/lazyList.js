@@ -1,6 +1,6 @@
 import { EVENTS, SCROLL_TARGETS, mixin } from './commons';
 
-export default {
+export default h => ({
     mixins: [mixin],
 
     props: {
@@ -27,6 +27,11 @@ export default {
         }
     },
 
+    emits: [
+        EVENTS.reachedTop,
+        EVENTS.reachedBottom
+    ],
+
     data() {
         return {
             limitIndex: +this.increment
@@ -52,23 +57,18 @@ export default {
     },
 
     mounted() {
-        this.$refs.container.addEventListener('scroll', this.onScroll);
-
-        this.$on(EVENTS.scrollTo, this.scrollTo);
+        this.$refs.container.addEventListener('scroll', this._onScroll);
     },
 
     methods: {
-        onScroll() {
+        _onScroll() {
             const container = this.$refs.container;
             
             if (this.isAlmostEqual(container.scrollTop, container.scrollHeight - container.offsetHeight, +this.loadingThreshold)) {
                 this.limitIndex = Math.min(this.numberOfItems, +this.increment + this.limitIndex);
-
-                if (this.$listeners.hasOwnProperty(EVENTS.reachedBottom)) {
-                    this.$emit(EVENTS.reachedBottom);
-                }
+                this.$emit(EVENTS.reachedBottom);
             }
-            else if (container.scrollTop === 0 && this.$listeners.hasOwnProperty(EVENTS.reachedTop)) {
+            else if (container.scrollTop === 0) {
                 this.$emit(EVENTS.reachedTop);
             }
         },
@@ -92,14 +92,14 @@ export default {
         }
     },
 
-    render(h) {
+    render() {
         let children;
         if (this.items.length === 0) {
-            const renderSlot = this.$scopedSlots['empty-list'];
+            const renderSlot = this.$slots['empty-list'];
             children = [renderSlot()];
         }
         else {
-            const renderSlot = this.$scopedSlots.default || (() => { });
+            const renderSlot = this.$slots.default || (() => { });
             children = this.items
                 .slice(0, this.limitIndex)
                 .map(item => h('div', { }, [renderSlot(item)]));
@@ -113,4 +113,4 @@ export default {
             }
         }, children);
     }
-};
+});

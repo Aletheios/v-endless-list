@@ -23,11 +23,13 @@
                     <h3>v-endless-virtual-list</h3>
                     <p>Virtual list with 10k items and fixed item height</p>
 
-                    <v-endless-virtual-list :items="items"
-                                            height="50vh"
-                                            item-height="30"
-                                            ref="virtualList"
-                                            class="endlessList">
+                    <v-endless-virtual-list
+                        :items="items"
+                        height="50vh"
+                        item-height="30"
+                        ref="virtualList"
+                        class="endlessList"
+                    >
                         <template #empty-list>
                             <b>No items in this list.</b>
                         </template>
@@ -52,12 +54,14 @@
                     <h3>v-endless-lazy-list</h3>
                     <p>Lazy loading list with 10k items and variable item height</p>
 
-                    <v-endless-lazy-list :items="items"
-                                         height="50vh"
-                                         increment="25"
-                                         list-change-behavior="keep"
-                                         ref="lazyList"
-                                         class="endlessList">
+                    <v-endless-lazy-list
+                        :items="items"
+                        height="50vh"
+                        increment="25"
+                        list-change-behavior="keep"
+                        ref="lazyList"
+                        class="endlessList"
+                    >
                         <template #empty-list>
                             <b>No items in this list.</b>
                         </template>
@@ -71,35 +75,37 @@
             </div>
         </div>
 
-        <script src="https://unpkg.com/vue@2.6.10/dist/vue.min.js"></script>
+        <script src="https://unpkg.com/vue@3.0.0/dist/vue.global.prod.js"></script>
         <script src="../dist/vEndlessList.js"></script>
 
         <script>
-            Vue.use(vEndlessList);
-
-            Vue.component('demo-list-item', {
-                template: `<div>
-                    <b>#</b> <slot></slot>
-                </div>`
-            });
-
             function createItems(amount, startFrom) {
                 const items = Array.from(new Array(amount));
                 return items.map((_, index) => Object.freeze({ index: startFrom + index }));
             }
 
-            new Vue({
-                el: '#app',
-                
-                data: {
-                    items: createItems(10000, 0),
-                    heights: { }
+            const DemoListItem = {
+                template: `<div>
+                    <b>#</b> <slot></slot>
+                </div>`
+            };
+
+            const App = {
+                components: {
+                    DemoListItem
+                },
+
+                data() {
+                    return {
+                        items: createItems(10000, 0),
+                        heights: { }
+                    };
                 },
 
                 methods: {
                     scrollTo(target) {
-                        this.$refs.virtualList.$emit('scroll-to', target);
-                        setTimeout(() => this.$refs.lazyList.$emit('scroll-to', target)); // because scroll to bottom might take a while with v-endless-lazy-list
+                        this.$refs.virtualList.scrollTo(target);
+                        setTimeout(() => this.$refs.lazyList.scrollTo(target));
                     },
                     addItems() {
                         this.items = this.items.concat(createItems(1000, this.items.length))
@@ -114,7 +120,11 @@
                         return this.heights[index];
                     }
                 }
-            });
+            };
+
+            const app = Vue.createApp(App);
+            app.use(vEndlessList, { h: Vue.h });
+            app.mount('#app');
         </script>
     </body>
 </html>

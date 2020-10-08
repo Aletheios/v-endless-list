@@ -1,6 +1,6 @@
 import { EVENTS, SCROLL_TARGETS, mixin } from './commons';
 
-export default {
+export default h => ({
     mixins: [mixin],
 
     props: {
@@ -12,6 +12,11 @@ export default {
             }
         }
     },
+
+    emits: [
+        EVENTS.reachedTop,
+        EVENTS.reachedBottom
+    ],
 
     data() {
         return {
@@ -33,14 +38,12 @@ export default {
     },
 
     mounted() {
-        this.$refs.container.addEventListener('scroll', this.onScroll);
-        this.onScroll(true);
-
-        this.$on(EVENTS.scrollTo, this.scrollTo);
+        this.$refs.container.addEventListener('scroll', this._onScroll);
+        this._onScroll(true);
     },
 
     methods: {
-        onScroll(init) {
+        _onScroll(init) {
             const scrollTop = this.$refs.container.scrollTop;
             const containerHeight = this.$refs.container.clientHeight;
 
@@ -48,12 +51,12 @@ export default {
             this.itemsEndIndex = this.itemsStartIndex + Math.ceil(containerHeight / this.itemHeight);
             this.paddingTop = this.itemsStartIndex * this.itemHeight;
 
-            if (scrollTop === 0 && this.$listeners.hasOwnProperty(EVENTS.reachedTop)) {
+            if (scrollTop === 0) {
                 if (init !== true) {
                     this.$emit(EVENTS.reachedTop);
                 }
             }
-            else if (this.$listeners.hasOwnProperty(EVENTS.reachedBottom)) {
+            else {
                 const totalHeight = this.itemHeight * this.items.length;
                 if (this.isAlmostEqual(totalHeight, scrollTop + containerHeight)) {
                     this.$emit(EVENTS.reachedBottom);
@@ -74,14 +77,14 @@ export default {
         }
     },
 
-    render(h) {
+    render() {
         let children;
         if (this.items.length === 0) {
-            const renderSlot = this.$scopedSlots['empty-list'];
+            const renderSlot = this.$slots['empty-list'];
             children = [renderSlot()];
         }
         else {
-            const renderSlot = this.$scopedSlots.default || (() => { });
+            const renderSlot = this.$slots.default || (() => { });
             const itemsList = this.items
                 .slice(this.itemsStartIndex, this.itemsEndIndex + 1)
                 .map(item => h('div', this.itemStyle, [renderSlot(item)]));
@@ -103,4 +106,4 @@ export default {
             }
         }, children);
     }
-};
+});
