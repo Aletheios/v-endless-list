@@ -1,6 +1,6 @@
 {
     "name": "v-endless-list",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "description": "Minimalistic and tiny Vue.js scroll list components for an endless amount of data",
     "keywords": [
         "vue",
@@ -44,6 +44,6 @@
         "yargs": "15.1.0"
     },
     "peerDependencies": {
-        "vue": ">= 2.6.0"
+        "vue": ">= 2.6.0 < 3"
     }
 }
