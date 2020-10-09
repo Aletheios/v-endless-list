@@ -29,6 +29,7 @@ Then import it in your project:
 
 ```javascript
 import { createApp, h } from 'vue';
+import vEndlessList from 'v-endless-list';
 
 const app = Vue.createApp(App);
 app.use(vEndlessList, { h });
